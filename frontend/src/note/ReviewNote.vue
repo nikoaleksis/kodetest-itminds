@@ -2,7 +2,8 @@
   <div class="content">
     <div class="page-title">
       <h1>Review Notes</h1>
-      <button class="new-note" @click="getUserById('001')">New</button>
+      <button class="new-note-btn" @click="doAddNewNote = !doAddNewNote">New</button>
+      <NewNote v-if="doAddNewNote" :toggle-new-note="() => doAddNewNote = !doAddNewNote" />
     </div>
     <div class="filter">
       <input type="text" placeholder="Quick search">
@@ -62,11 +63,16 @@
 
 <script>
 import notesApi from '../api/notes';
+import NewNote from './NewNote.vue';
 
 export default {
   name: 'ReviewNotes',
+  components: { NewNote },
   created() {
     this.getNotes(this.offset);
+  },
+  updated() {
+    console.log(this.doAddNewNote);
   },
   methods: {
     async getNotes() {
@@ -154,6 +160,7 @@ export default {
     return {
       notes: [],
       offset: 3,
+      doAddNewNote: false,
     };
   },
 };
@@ -180,13 +187,14 @@ td {
 .filter {
   margin-bottom: 50px;
 }
-.new-note {
+.new-note-btn {
   background-color: #0086ff;
   color: #fff;
   height: 25px;
   width: 75px;
   margin-left: 20px;
-  border-radius: 5px;
+  border-color: #0086ff;
+  border-radius: 2px;
 }
 .profile-pic {
   height: 30px;
@@ -200,6 +208,7 @@ td {
 }
 .in-progress {
   background-color: #0086ff;
+  color: #fff;
 }
 .low {
   color: #fff;

@@ -28,10 +28,13 @@ main {
   margin: 0 auto;
   padding: 10px;
   background-color: white;
-  width: 1024px;
+  width: 1424px;
   min-height: 300px;
   display: flex;
 }
+button:hover {
+  cursor: pointer;
+},
 header {
   width: 1084px;
   margin: 0 auto;
