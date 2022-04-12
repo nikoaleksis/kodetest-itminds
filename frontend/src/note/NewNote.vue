@@ -9,6 +9,7 @@
 
 <script>
 export default {
+  name: 'NewNote',
   props: ['toggleNewNote'],
 };
 </script>

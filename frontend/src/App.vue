@@ -20,6 +20,10 @@ export default {
 </script>
 
 <style>
+:root {
+  --ms-tag-bg: #0086ff;
+  --ms-tag-color: #D1FAE5;
+}
 body {
   background: #fff;
   background-attachment: fixed;
@@ -28,7 +32,7 @@ main {
   margin: 0 auto;
   padding: 10px;
   background-color: white;
-  width: 1424px;
+  width: 1700px;
   min-height: 300px;
   display: flex;
 }

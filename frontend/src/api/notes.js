@@ -8,6 +8,12 @@ const notesApi = {
       .catch((e) => console.log(e));
     return data;
   },
+  getSections() {
+    const data = axios.get(`${this.baseUrl}/review-notes/sections`)
+      .then((res) => res.data)
+      .catch((e) => console.log(e));
+    return data;
+  },
 };
 
 export default notesApi;

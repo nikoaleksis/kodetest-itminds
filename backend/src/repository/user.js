@@ -6,6 +6,9 @@ const users = {
   getUserById(id) {
     return userData.find(user => user.id === id);
   },
+  getUsers() {
+    return userData;
+  },
 };
 
 module.exports = users;

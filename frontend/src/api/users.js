@@ -8,6 +8,12 @@ const usersApi = {
       .catch((e) => console.log(e));
     return data;
   },
+  getUsers() {
+    const data = axios.get(`${this.baseUrl}/users`)
+      .then((res) => res.data)
+      .catch((e) => console.log(e));
+    return data;
+  },
 };
 
 export default usersApi;

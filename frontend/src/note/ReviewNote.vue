@@ -2,57 +2,61 @@
   <div class="content">
     <div class="page-title">
       <h1>Review Notes</h1>
-      <button class="new-note-btn" @click="doAddNewNote = !doAddNewNote">New</button>
-      <NewNote v-if="doAddNewNote" :toggle-new-note="() => doAddNewNote = !doAddNewNote" />
+      <button class="new-note-btn" @click="doAddNewNote = !doAddNewNote">
+        New
+      </button>
+      <NewNote
+        v-if="doAddNewNote"
+        :toggle-new-note="() => (doAddNewNote = !doAddNewNote)"
+      />
     </div>
-    <div class="filter">
-      <input type="text" placeholder="Quick search">
-      <!--<label for="toggle-type">Type</label>
-      <label for="toggle-priority">Priority</label>
-      <b-button-group>
-        <b-button>Test1</b-button>
-        <b-button>Test2</b-button>
-        <b-button>Test3</b-button>
-      </b-button-group>
-      <label for="reporters">Reporter</label>
-      <input id="reporters" type="text">
-      <label for="assignees">Assignees</label>
-      <input id="assignees" type="text"/>
-      <label for="section">Section</label>
-      <input id="section" type="text"/>
-      <label for="date">Date</label>
-      <input id="date" type="text"/>-->
-    </div>
+    <FilterNotes />
     <div class="data">
       <table>
         <tbody>
           <tr v-for="(note, index) in notes" :key="index">
             <td>
               <input
-              type="checkbox"
-              v-model="note.isClosed"
-              @:change="setIsClosed">
+                type="checkbox"
+                v-model="note.isClosed"
+                @:change="setIsClosed"
+              />
             </td>
-            <td>{{note.title}}</td>
-            <td class="neutral">{{note.type}}</td>
-            <td :class="calcStatusColor(note.status)">{{note.status}}</td>
-            <td :class="calcPriorityColor(note.priority.text)">{{note.priority.text}}</td>
+            <td>{{ note.title }}</td>
+            <td class="neutral">{{ note.type }}</td>
+            <td :class="calcStatusColor(note.status)">{{ note.status }}</td>
+            <td :class="calcPriorityColor(note.priority.text)">
+              {{ note.priority.text }}
+            </td>
             <td :class="calcDueDateColor(note.dueDate)">
               <span v-if="isDueDate(note.dueDate)">Past due: </span>
-              {{formatDateStr(note.dueDate)}}
+              {{ formatDateStr(note.dueDate) }}
             </td>
-            <td><img class="profile-pic" v-bind:src="note.reporter.photo" alt="Avatar"></td>
+            <td>
+              <img
+                class="profile-pic"
+                v-bind:src="note.reporter.photo"
+                alt="Avatar"
+              />
+            </td>
             <td v-if="note.assigneeUsers.length !== 0">
-              <span v-for="(assignee, index) in note.assigneeUsers" :key="index">
-                <img class="profile-pic" v-bind:src="assignee.photo" alt="Avatar">
+              <span
+                v-for="(assignee, index) in note.assigneeUsers"
+                :key="index"
+              >
+                <img
+                  class="profile-pic"
+                  v-bind:src="assignee.photo"
+                  alt="Avatar"
+                />
               </span>
             </td>
             <td v-else></td>
-            <td :class="note.sectionRef !== null ? 'neutral' : '' ">
-              {{formatSectionStr(note.sectionRef)}}
+            <td :class="note.sectionRef !== null ? 'neutral' : ''">
+              {{ formatSectionStr(note.sectionRef) }}
             </td>
-            <td>{{formatDateStr(note.createdAt.$date)}}</td>
-            <td>{{formatDateStr(note.updatedAt.$date)}}</td>
+            <td>{{ formatDateStr(note.createdAt.$date) }}</td>
+            <td>{{ formatDateStr(note.updatedAt.$date) }}</td>
           </tr>
         </tbody>
       </table>
@@ -63,26 +67,34 @@
 
 <script>
 import notesApi from '../api/notes';
+import usersApi from '../api/users';
 import NewNote from './NewNote.vue';
+import FilterNotes from './FilterNotes.vue';
 
 export default {
   name: 'ReviewNotes',
-  components: { NewNote },
+  components: { NewNote, FilterNotes },
   created() {
     this.getNotes(this.offset);
-  },
-  updated() {
-    console.log(this.doAddNewNote);
+    this.getUsers();
+    this.getSections();
   },
   methods: {
+    async getSections() {
+      const sectionsData = await notesApi.getSections();
+      this.sections = sectionsData;
+    },
     async getNotes() {
       const notesData = await notesApi.getNotes(this.offset);
       this.notes = this.notes.concat(notesData);
     },
+    async getUsers() {
+      const usersData = await usersApi.getUsers();
+      this.users = usersData.map((user) => user.name);
+    },
     loadMoreNotes() {
       this.offset += 3;
       this.getNotes(this.offset);
-      console.log(this.offset);
     },
     calcPriorityColor(priority) {
       switch (priority) {
@@ -140,7 +152,9 @@ export default {
         return dateStr;
       }
       // Create a date object remove the zero hour offset if exists
-      const dateObj = new Date(dateStr.slice(-1) === 'Z' ? dateStr.slice(0, -1) : dateStr);
+      const dateObj = new Date(
+        dateStr.slice(-1) === 'Z' ? dateStr.slice(0, -1) : dateStr,
+      );
       const date = String(dateObj.getDate()).padStart(2, 0);
       const month = String(dateObj.getMonth()).padStart(2, 0);
       const year = dateObj.getFullYear();
@@ -159,12 +173,17 @@ export default {
   data() {
     return {
       notes: [],
+      users: [],
+      sections: [],
+      test: ['Test1', 'Test2', 'Test3'],
       offset: 3,
       doAddNewNote: false,
     };
   },
 };
 </script>
+
+<style src="@vueform/multiselect/themes/default.css"></style>
 
 <style scoped>
 table {
@@ -183,9 +202,6 @@ td {
   align-items: center;
   border-bottom: 2px solid #eee;
   margin-bottom: 20px;
-}
-.filter {
-  margin-bottom: 50px;
 }
 .new-note-btn {
   background-color: #0086ff;
@@ -230,15 +246,15 @@ td {
   background-color: #e6f2fe;
   height: 40px;
   width: 100%;
-  display:table;
+  display: table;
 }
 .load-more:hover {
   cursor: pointer;
 }
 .load-more span {
   color: #0287fd;
-  display:table-cell;
-  vertical-align:middle;
+  display: table-cell;
+  vertical-align: middle;
   text-decoration-line: underline;
 }
 </style>

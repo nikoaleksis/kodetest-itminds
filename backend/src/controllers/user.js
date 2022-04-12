@@ -7,4 +7,8 @@ router.get('/users/:id', (req, res) => {
   res.send(userService.getUserById(id));
 });
 
+router.get('/users', (req, res) => {
+  res.send(userService.getUsers());
+});
+
 module.exports = router;

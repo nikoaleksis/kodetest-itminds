@@ -7,4 +7,8 @@ router.get('/review-notes', (req, res) => {
   res.send(noteService.getNotes(offset));
 });
 
+router.get('/review-notes/sections', (req, res) => {
+  res.send(noteService.getSections());
+});
+
 module.exports = router;
